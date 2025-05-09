@@ -40,19 +40,9 @@ class ModelIntegration:
         self,
         messages: List[Dict[str, str]],
         temperature: float = 0.7,
+        max_tokens: int = 100,  # Novo parâmetro
         **kwargs
     ) -> Dict[str, Any]:
-        """
-        Realiza uma chamada para o modelo de IA.
-        
-        Args:
-            messages: Lista de mensagens para o chat
-            temperature: Nível de criatividade do modelo
-            **kwargs: Parâmetros adicionais para a requisição
-            
-        Returns:
-            Resposta do modelo em formato JSON
-        """
         # Validação dos parâmetros
         if not messages:
             raise ValueError("A lista de mensagens não pode estar vazia")
@@ -63,6 +53,7 @@ class ModelIntegration:
         payload = {
             "messages": messages,
             "temperature": temperature,
+            "max_tokens": max_tokens,  # Novo campo
             "top_p": kwargs.get("top_p", 0.9),
             "frequency_penalty": kwargs.get("frequency_penalty", 1.0),
             "presence_penalty": kwargs.get("presence_penalty", 0.5),
@@ -96,20 +87,8 @@ class ModelIntegration:
     async def process_flow(
         self,
         user_message: str,
-        flow: Flow,
-        temperature: float = 0.7
+        flow: Flow
     ) -> Dict[str, Any]:
-        """
-        Processa um fluxo de passos com o modelo de IA.
-        
-        Args:
-            user_message: Mensagem do usuário
-            flow: Objeto Flow com os passos
-            temperature: Nível de criatividade do modelo
-            
-        Returns:
-            Resposta do fluxo com as respostas de cada passo
-        """
         if not user_message:
             raise ValueError("A mensagem do usuário não pode estar vazia")
         
@@ -139,7 +118,8 @@ class ModelIntegration:
                 # Chama o modelo
                 response = await self.chat_completion(
                     messages=messages,
-                    temperature=temperature
+                    temperature=step.temperature,  # Usar a temperatura do passo
+                    max_tokens=step.max_tokens  # Usar o max_tokens do passo
                 )
                 
                 # Extrai a resposta do assistente

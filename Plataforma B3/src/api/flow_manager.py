@@ -9,6 +9,8 @@ class FlowStep(BaseModel):
     system_prompt: str = Field(..., min_length=1)
     step_name: str = Field(..., min_length=1)
     step_order: int = Field(..., ge=1)
+    max_tokens: Optional[int] = Field(default=100, ge=1)  # Novo campo
+    temperature: Optional[float] = Field(default=0.7, ge=0.0, le=1.0)  # Novo campo
 
     @validator('step_name')
     def validate_step_name(cls, v):

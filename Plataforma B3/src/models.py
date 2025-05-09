@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, JSON, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float
 from sqlalchemy.orm import relationship
 from src.database import Base
 
@@ -21,6 +21,7 @@ class FlowStep(Base):
     step_name = Column(String)
     step_order = Column(Integer)
     system_prompt = Column(String)
-    temperature = Column(Integer, default=0.7)
+    temperature = Column(Float, default=0.7)  
+    max_tokens = Column(Integer, default=100)
     
-    flow = relationship("Flow", back_populates="steps") 
+    flow = relationship("Flow", back_populates="steps")

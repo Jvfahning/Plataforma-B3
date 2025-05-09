@@ -43,6 +43,8 @@ class FlowStepRequest(BaseModel):
     system_prompt: str
     step_name: str
     step_order: int
+    max_tokens: Optional[int] = 100  # Novo campo
+    temperature: Optional[float] = 0.7  # Novo campo
 
 class FlowRequest(BaseModel):
     name: str
@@ -86,7 +88,9 @@ async def create_flow(flow_id: str, flow: FlowRequest):
             FlowStep(
                 system_prompt=step.system_prompt,
                 step_name=step.step_name,
-                step_order=step.step_order
+                step_order=step.step_order,
+                max_tokens=step.max_tokens,  # Novo campo
+                temperature=step.temperature  # Novo campo
             )
             for step in flow.steps
         ]
@@ -124,7 +128,9 @@ async def update_flow(flow_id: str, flow: FlowRequest):
             FlowStep(
                 system_prompt=step.system_prompt,
                 step_name=step.step_name,
-                step_order=step.step_order
+                step_order=step.step_order,
+                max_tokens=step.max_tokens,  # Novo campo
+                temperature=step.temperature  # Novo campo
             )
             for step in flow.steps
         ]
