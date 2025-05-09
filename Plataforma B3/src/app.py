@@ -258,21 +258,30 @@ def main():
                         st.subheader("Testar Fluxo")
                         user_message = st.text_area("Digite sua mensagem de teste")
                         if st.button("Executar Teste"):
-                            try:
-                                result = asyncio.run(
-                                    model_client.process_flow(
-                                        user_message=user_message,
-                                        flow=flow
-                                    )
-                                )
-                                st.subheader("Respostas")
-                                for step_name, step_response in result["steps"].items():
-                                    with st.expander(f"Resposta do passo: {step_name}"):
-                                        st.write(step_response["assistant_message"])
-                                
-                                st.success(f"Resposta final: {result['final_response']}")
-                            except Exception as e:
-                                st.error(f"Erro ao testar fluxo: {str(e)}")
+                            if user_message.strip() == "":
+                                st.error("Por favor, digite uma mensagem de teste.")
+                            else:
+                                with st.spinner("Executando teste..."):
+                                    try:
+                                        # Usar asyncio.run pode não ser ideal em alguns ambientes, então vamos tentar uma abordagem diferente
+                                        loop = asyncio.new_event_loop()
+                                        asyncio.set_event_loop(loop)
+                                        result = loop.run_until_complete(
+                                            model_client.process_flow(
+                                                user_message=user_message,
+                                                flow=flow
+                                            )
+                                        )
+                                        loop.close()
+
+                                        st.subheader("Respostas")
+                                        for step_name, step_response in result["steps"].items():
+                                            with st.expander(f"Resposta do passo: {step_name}"):
+                                                st.write(step_response["assistant_message"])
+
+                                        st.success(f"Resposta final: {result['final_response']}")
+                                    except Exception as e:
+                                        st.error(f"Erro ao testar fluxo: {str(e)}")
 
 if __name__ == "__main__":
     main() 
