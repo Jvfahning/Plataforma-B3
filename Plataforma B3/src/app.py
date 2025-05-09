@@ -243,7 +243,7 @@ def main():
                         st.write(f"**Prompt:** {step.system_prompt}")
                         st.write("---")
                     
-                    # Botões para editar ou excluir o fluxo
+                    # Botões para editar, excluir ou testar o fluxo
                     if st.button("Editar Fluxo"):
                         st.session_state.editing_flow = True
                     
@@ -253,6 +253,26 @@ def main():
                             st.success("Fluxo excluído com sucesso!")
                         except Exception as e:
                             st.error(f"Erro ao excluir fluxo: {str(e)}")
+                    
+                    if st.button("Testar Fluxo"):
+                        st.subheader("Testar Fluxo")
+                        user_message = st.text_area("Digite sua mensagem de teste")
+                        if st.button("Executar Teste"):
+                            try:
+                                result = asyncio.run(
+                                    model_client.process_flow(
+                                        user_message=user_message,
+                                        flow=flow
+                                    )
+                                )
+                                st.subheader("Respostas")
+                                for step_name, step_response in result["steps"].items():
+                                    with st.expander(f"Resposta do passo: {step_name}"):
+                                        st.write(step_response["assistant_message"])
+                                
+                                st.success(f"Resposta final: {result['final_response']}")
+                            except Exception as e:
+                                st.error(f"Erro ao testar fluxo: {str(e)}")
 
 if __name__ == "__main__":
     main() 
