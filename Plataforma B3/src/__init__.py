@@ -1,3 +1,0 @@
-"""
-Pacote principal da aplicação.
-""" 
