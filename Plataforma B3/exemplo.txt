@@ -1,0 +1,39 @@
+{
+  "name": "Triagem de E-mails de Suporte",
+  "description": "Um fluxo que classifica um e-mail de suporte e o direciona para uma resposta urgente ou padrão com base na classificação.",
+  "steps": [
+    {
+      "step_name": "Classificar_Email",
+      "model": "gpt-4o-mini",
+      "temperature": 0.1,
+      "system_prompt": "Analise o e-mail do cliente e classifique sua prioridade. Responda apenas com a palavra 'Urgente' ou 'Padrão'.",
+      "max_tokens": 5,
+      "step_order": 1
+    },
+    {
+      "step_name": "Router_Prioridade",
+      "conditions": {
+        "Urgente": "Urgente",
+        "Padrão": "Padrão"
+      }
+    },
+    {
+      "step_name": "Gerar_Resposta_Urgente",
+      "model": "gpt-4-turbo",
+      "temperature": 0.7,
+      "system_prompt": "Você é um agente de suporte sênior. O e-mail a seguir foi classificado como urgente. Escreva uma resposta detalhada e empática, informando que o problema está sendo tratado com prioridade máxima.",
+      "max_tokens": 500,
+      "step_order": 2,
+      "execute_if": "Urgente"
+    },
+    {
+      "step_name": "Gerar_Resposta_Padrao",
+      "model": "gpt-4o-mini",
+      "temperature": 0.5,
+      "system_prompt": "Você é um assistente virtual. Escreva uma resposta automática curta e amigável, agradecendo o contato e informando que a solicitação foi recebida e será respondida em até 48 horas.",
+      "max_tokens": 150,
+      "step_order": 2,
+      "execute_if": "Padrão"
+    }
+  ]
+}
